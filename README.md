@@ -1,54 +1,82 @@
-Introduction
+A Dictionary-Based Fuzzy Search and Spell Correction Engine for Smart Shopping
 
-Dictionary Query Engine is a fuzzy search system designed to find relevant words even when the user enters a misspelled query.
+Problem Statement:
+Online shopping platforms rely heavily on search boxes to help customers find products, but customers frequently misspell item names while typing, causing traditional exact-match search to return no results. This project builds a console-based smart shopping search engine that tolerates spelling mistakes, auto-corrects them, and helps customers discover, filter, and purchase products efficiently.
 
-Unlike exact-match search, the system checks how close the entered word is to dictionary words and provides the most relevant suggestions.
+Features:
+1.Spell-corrected item search ("Did you mean...?") - Trie + Levenshtein Edit Distance (Dynamic Programming)
+2.Autocomplete while typing                        - Trie prefix traversal
+3.Keyword / substring search	                   - Rabin-Karp rolling hash
+4.Category-wise browsing	                   - HashMap grouping
+5.Price-range search	                           - Binary Search (on a price-sorted list)
+6.Top-N cheapest / most expensive items            - Priority Queue (Heap)
+7.Shopping cart with running total	           - HashMap
+8.Trending searches	                           - HashMap frequency counter
+9.Catalog structure visualization	           - Trie traversal / printing
 
-Problem
+Project Structure:
+SmartShopping/
+├── TrieNode.java           - single trie node (children map + end-of-word flag)
+├── Trie.java               - insert, loadFromFile, prefix search, tree printing
+├── Suggestion.java         - (word, distance) ranked result for fuzzy search
+├── FuzzySearchEngine.java  - Trie-DFS + Levenshtein DP fuzzy search engine
+├── RabinKarp.java          - rolling-hash substring search
+├── AutoCorrect.java        - picks the single best spelling correction
+├── Product.java            - product data holder (name, category, price, description)
+├── ProductCatalog.java     - loads products.csv, builds Trie + category index
+├── SearchHistory.java      - frequency counter for trending searches
+├── PriceSearch.java        - binary search over price-sorted products
+├── TopNFinder.java         - heap-based top-N cheapest/most expensive finder
+├── ShoppingCart.java       - hashmap-based cart with quantities and totals
+├── Main.java               - menu-driven console entry point
+└── products.csv            - product catalog (122 items, 10 categories)
 
-When users make spelling mistakes, traditional dictionary search may return no results. This becomes more challenging for large and multilingual dictionaries, especially when different Unicode and Indian-language scripts are involved.
+How to Run:
+Requires JDK 11 or later
 
-Solution
+# Compile
+javac *.java
 
-The system uses edit-distance based fuzzy matching to compare the user's query with dictionary words. It calculates the similarity between words, ranks the possible matches, and displays the closest suggestions.
+# Run
+java Main products.csv
 
-Features
-Fuzzy search for misspelled words
-Edit-distance based matching
-Similarity-based ranking
-Unicode and multilingual support
-Efficient dictionary indexing
-Support for large dictionaries
-Technologies Used
-Java
-Dynamic Programming
-Trie / HashMap
-Java Unicode and String Libraries
-Git & GitHub
-Working
-User enters a word
-        ↓
-Search dictionary
-        ↓
-Calculate edit distance
-        ↓
-Compare similarity
-        ↓
-Rank matching words
-        ↓
-Display suggestions
-Example
+You'll see a menu:
+1.  Search for an item (with spell correction)
+2.  Browse all items
+3.  Browse items by category
+4.  Autocomplete (type a prefix)
+5.  Keyword / substring search
+6.  Trending searches
+7.  Search by price range (Binary Search)
+8.  Top-N cheapest / most expensive (Heap)
+9.  Shopping cart
+10. View catalog structure (Trie)
+11. Exit
 
-If the user searches for:
+Example: Spell correction
+Choose an option: 1
+Enter item name: shooz
 
-computr
+Did you mean: "shoes"?
 
-The system can identify the dictionary word:
+Item found:
+  Name        : Shoes
+  Category    : Footwear
+  Price       : Rs. 1299.00
+  Description : Shoes - a reliable footwear product for everyday use.
 
-computer
+How It Works
 
-because the two words are very similar.
+Fuzzy search / spell correction: Product names are indexed in a Trie, where each node represents one character and shared prefixes (e.g. "car", "care", "career") share the same path. When a query is misspelled, the engine performs a depth-first traversal of the Trie, computing one row of the Levenshtein edit-distance DP table per character — reusing shared-prefix computation and pruning branches that can no longer produce a valid match (branch-and-bound). The maximum allowed edit distance scales with query length (2 for short words, up to 4 for long words), so longer words aren't unfairly penalized for having more room for typos.
 
-Objective
+Autocomplete: Reuses the same Trie — walking to the prefix's node once, then collecting every word stored beneath it.
 
-The main objective of this project is to provide fast, accurate, and user-friendly dictionary searching, even when users make spelling mistakes or search using multilingual text.
+Substring/keyword search: Uses Rabin-Karp's rolling hash to check whether a keyword appears anywhere inside each product name, in average O(n) time per word instead of a naive character-by-character scan.
+
+Price-range search: Products are sorted once by price, then binary search finds the lower and upper bounds of the requested range in O(log n) instead of scanning the whole catalog.
+
+Top-N cheapest/most expensive: Uses a PriorityQueue as a bounded heap of size N, giving O(P log N) performance instead of sorting the entire catalog.
+
+Shopping cart & trending searches: Both use a HashMap for O(1) add/update/lookup — the cart maps product name to quantity, and the search-history tracker maps search term to frequency count.
+
+
