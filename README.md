@@ -4,15 +4,15 @@ Problem Statement:
 Online shopping platforms rely heavily on search boxes to help customers find products, but customers frequently misspell item names while typing, causing traditional exact-match search to return no results. This project builds a console-based smart shopping search engine that tolerates spelling mistakes, auto-corrects them, and helps customers discover, filter, and purchase products efficiently.
 
 Features:
-1.Spell-corrected item search ("Did you mean...?") - Trie + Levenshtein Edit Distance (Dynamic Programming)
-2.Autocomplete while typing                        - Trie prefix traversal
-3.Keyword / substring search	                   - Rabin-Karp rolling hash
-4.Category-wise browsing	                   - HashMap grouping
-5.Price-range search	                           - Binary Search (on a price-sorted list)
-6.Top-N cheapest / most expensive items            - Priority Queue (Heap)
-7.Shopping cart with running total	           - HashMap
-8.Trending searches	                           - HashMap frequency counter
-9.Catalog structure visualization	           - Trie traversal / printing
+1.Spell-corrected item search ("Did you mean...?")  - Trie + Levenshtein Edit Distance (Dynamic Programming)
+2.Autocomplete while typing                         - Trie prefix traversal
+3.Keyword / substring search	                      - Rabin-Karp rolling hash
+4.Category-wise browsing	                          - HashMap grouping
+5.Price-range search	                              - Binary Search (on a price-sorted list)
+6.Top-N cheapest / most expensive items             - Priority Queue (Heap)
+7.Shopping cart with running total	                - HashMap
+8.Trending searches	                                - HashMap frequency counter
+9.Catalog structure visualization	                  - Trie traversal / printing
 
 Project Structure:
 SmartShopping/
